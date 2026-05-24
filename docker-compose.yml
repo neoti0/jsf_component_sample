@@ -1,0 +1,9 @@
+services:
+  wildfly:
+    build: .
+    ports:
+      - "8080:8080"
+      - "9990:9990"
+    environment:
+      - WILDFLY_MANAGEMENT_USER=admin
+      - WILDFLY_MANAGEMENT_PASSWORD=admin123

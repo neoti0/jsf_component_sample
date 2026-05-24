@@ -1,0 +1,17 @@
+# Maven build output
+target/
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# OS
+.DS_Store
+
+# Claude Code local settings
+.claude/
+
+# Temporary backup files
+*.save

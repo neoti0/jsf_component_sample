@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:cc="jakarta.faces.composite"
+      xmlns:pt="jakarta.faces.passthrough">
+
+<cc:interface>
+    <!--
+        label           : ラベルテキスト（必須）
+        value           : バインド先の値（EL式）（必須）
+        required        : 必須フラグ。true=「※必須」バッジ、false=「任意」バッジ（デフォルト: true）
+        requiredMessage : 必須エラーメッセージ。未指定時は「{label}は必須です」を自動生成
+        size            : DADS インプットサイズ sm / md（デフォルト）/ lg
+        placeholder     : プレースホルダーテキスト
+
+        ※ エラー表示は DADS 準拠：
+           - 赤枠は CSS :has() セレクタで h:message の有無を検出して制御
+           - エラーテキストの「＊」プレフィックスは CSS ::before で付与
+    -->
+    <cc:attribute name="label"
+                  type="java.lang.String"
+                  required="true" />
+    <cc:attribute name="value"
+                  required="true" />
+    <cc:attribute name="required"
+                  type="java.lang.Boolean"
+                  default="true" />
+    <cc:attribute name="requiredMessage"
+                  type="java.lang.String"
+                  default="" />
+    <cc:attribute name="size"
+                  type="java.lang.String"
+                  default="md" />
+    <cc:attribute name="placeholder"
+                  type="java.lang.String"
+                  default="" />
+
+    <!-- 外部から f:validator / f:converter を付与できるよう公開 -->
+    <cc:editableValueHolder name="input" targets="input" />
+</cc:interface>
+
+<cc:implementation>
+    <div class="dads-form-control-label" data-size="#{cc.attrs.size}">
+
+        <h:outputLabel for="input" styleClass="dads-form-control-label__label">
+            #{cc.attrs.label}
+            <h:outputText value="※必須"
+                          styleClass="dads-form-control-label__requirement"
+                          pt:data-required="true"
+                          rendered="#{cc.attrs.required}" />
+            <h:outputText value="任意"
+                          styleClass="dads-form-control-label__requirement"
+                          rendered="#{not cc.attrs.required}" />
+        </h:outputLabel>
+
+        <span class="dads-input-text">
+            <h:inputText id="input"
+                         value="#{cc.attrs.value}"
+                         required="#{cc.attrs.required}"
+                         requiredMessage="#{empty cc.attrs.requiredMessage ? cc.attrs.label.concat('は必須です') : cc.attrs.requiredMessage}"
+                         styleClass="dads-input-text__input"
+                         pt:data-size="#{cc.attrs.size}"
+                         pt:placeholder="#{cc.attrs.placeholder}" />
+            <!--
+                h:message は検証エラーがあるときだけ span を出力する。
+                CSS :has(.dads-input-text__error-text) でエラー時の赤枠を制御。
+            -->
+            <h:message for="input" styleClass="dads-input-text__error-text" />
+        </span>
+
+    </div>
+</cc:implementation>
+
+</html>

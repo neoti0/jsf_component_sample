@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:cc="jakarta.faces.composite"
+      xmlns:pt="jakarta.faces.passthrough">
+
+<cc:interface>
+    <!--
+        value       : ボタンに表示するラベルテキスト（必須）
+        action      : アクションメソッド（例: #{userBean.register}）
+        buttonType  : DADS ボタン種別  solid-fill（デフォルト）/ outline / text
+        size        : DADS ボタンサイズ xs / sm / md（デフォルト）/ lg
+        disabled    : 非活性フラグ
+        ajaxExecute : Ajax の execute 対象 ID（スペース区切り）。未指定時は Ajax なし
+        ajaxRender  : Ajax の render 対象 ID（スペース区切り）。未指定時は Ajax なし
+
+        ※ composite component は NamingContainer になるため、
+           ajaxExecute / ajaxRender で外部コンポーネントを参照するときは
+           絶対 ID（:formId:componentId）を使うこと。
+    -->
+    <cc:attribute name="value"
+                  type="java.lang.String"
+                  required="true" />
+    <cc:attribute name="action"
+                  method-signature="java.lang.String action()"
+                  required="false" />
+    <cc:attribute name="buttonType"
+                  type="java.lang.String"
+                  default="solid-fill" />
+    <cc:attribute name="size"
+                  type="java.lang.String"
+                  default="md" />
+    <cc:attribute name="disabled"
+                  type="java.lang.Boolean"
+                  default="false" />
+    <cc:attribute name="ajaxExecute"
+                  type="java.lang.String"
+                  default="" />
+    <cc:attribute name="ajaxRender"
+                  type="java.lang.String"
+                  default="" />
+</cc:interface>
+
+<cc:implementation>
+    <h:commandButton id="btn"
+                     value="#{cc.attrs.value}"
+                     action="#{cc.attrs.action}"
+                     disabled="#{cc.attrs.disabled}"
+                     styleClass="dads-button"
+                     pt:data-type="#{cc.attrs.buttonType}"
+                     pt:data-size="#{cc.attrs.size}">
+        <!--
+            ajaxExecute が未指定のとき disabled=true で Ajax を無効化し
+            通常のフォーム送信として動作させる
+        -->
+        <f:ajax execute="#{empty cc.attrs.ajaxExecute ? '@this' : cc.attrs.ajaxExecute}"
+                render="#{cc.attrs.ajaxRender}"
+                disabled="#{empty cc.attrs.ajaxExecute}" />
+    </h:commandButton>
+</cc:implementation>
+
+</html>
