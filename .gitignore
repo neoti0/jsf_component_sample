@@ -15,3 +15,7 @@ target/
 
 # Temporary backup files
 *.save
+
+# Environment variables (secrets)
+.env
+.env.*
