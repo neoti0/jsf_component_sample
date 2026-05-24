@@ -54,23 +54,20 @@
                         <span class="dads-form-control-label__requirement" data-required="true">※必須</span>
                     </h:outputLabel>
                     <div class="postal-row">
-                        <span class="dads-input-text">
-                            <h:inputText id="postalCode" value="#{userBean.postalCode}" required="true"
-                                         requiredMessage="郵便番号は必須です"
+                        <h:panelGroup id="postalCodeInput" styleClass="dads-input-text">
+                            <h:inputText id="postalCode" value="#{userBean.postalCode}"
                                          styleClass="dads-input-text__input" pt:data-size="md"
                                          pt:placeholder="例: 100-0004" />
                             <h:message for="postalCode" styleClass="dads-input-text__error-text" />
-                        </span>
+                        </h:panelGroup>
                         <dads:button id="searchBtn"
                                      value="住所検索"
                                      action="#{userBean.searchAddress}"
                                      buttonType="outline"
                                      size="md"
                                      ajaxExecute=":registerForm:postalCode"
-                                     ajaxRender=":registerForm:addressMsg :registerForm:prefecture :registerForm:city :registerForm:streetAddress" />
+                                     ajaxRender=":registerForm:postalCodeInput :registerForm:prefecture :registerForm:city :registerForm:streetAddress" />
                     </div>
-                    <h:outputText id="addressMsg" value="#{userBean.addressMessage}"
-                                  styleClass="dads-input-text__error-text" />
                 </div>
 
                 <dads:inputField id="prefecture"

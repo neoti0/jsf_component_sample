@@ -2,6 +2,8 @@ package com.example.jsfsample;
 
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Named;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,15 +14,22 @@ public class UserBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @NotBlank(message = "名前は必須です")
     private String name;
+    @NotBlank(message = "メールアドレスは必須です")
     private String email;
+    @NotBlank(message = "郵便番号は必須です")
+    @Pattern(regexp = "\\d{3}-?\\d{4}", message = "郵便番号の形式が正しくありません（例: 100-0004）")
     private String postalCode;
+    @NotBlank(message = "都道府県は必須です")
     private String prefecture;
+    @NotBlank(message = "市区町村は必須です")
     private String city;
+    @NotBlank(message = "町村番地は必須です")
     private String streetAddress;
     private String buildingName;
+    @NotBlank(message = "電話番号は必須です")
     private String phoneNumber;
-    private String addressMessage;
     private List<User> users = new ArrayList<>();
 
     public String register() {
@@ -33,20 +42,14 @@ public class UserBean implements Serializable {
         streetAddress = null;
         buildingName = null;
         phoneNumber = null;
-        addressMessage = null;
         return "list?faces-redirect=true";
     }
 
     public String searchAddress() {
-        if (postalCode == null || !postalCode.matches("\\d{3}-?\\d{4}")) {
-            addressMessage = "郵便番号の形式が正しくありません（例: 100-0004）";
-            return null;
-        }
         // TODO: 実際のAPIに差し替える
         prefecture = "東京都";
         city = "千代田区";
         streetAddress = "大手町";
-        addressMessage = null;
         return null;
     }
 
@@ -73,9 +76,6 @@ public class UserBean implements Serializable {
 
     public String getPhoneNumber() { return phoneNumber; }
     public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
-
-    public String getAddressMessage() { return addressMessage; }
-    public void setAddressMessage(String addressMessage) { this.addressMessage = addressMessage; }
 
     public List<User> getUsers() { return users; }
 

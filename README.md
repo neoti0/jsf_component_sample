@@ -115,6 +115,30 @@ index.xhtml
 
 ---
 
+## ドキュメント
+
+設計ドキュメントは `docs/` 配下で管理しています。
+
+| ファイル | 内容 |
+|---|---|
+| [docs/PLAN.md](docs/PLAN.md) | 要件ダンプ |
+| [docs/SPEC.md](docs/SPEC.md) | 画面・クラス・コンポーネント仕様 |
+| [docs/TODO.md](docs/TODO.md) | タスク管理 |
+| [docs/KNOWLEDGE.md](docs/KNOWLEDGE.md) | 実装ノウハウ・ハマりポイント |
+
+### アーキテクチャディシジョンレコード（ADR）
+
+アーキテクチャ上の意思決定の経緯は `docs/adr/` に Nygard 形式で記録しています。
+
+| ADR | タイトル | ステータス |
+|---|---|---|
+| [ADR-001](docs/adr/ADR-001-bv-annotations-on-flowscoped-model.md) | Bean Validation アノテーションを FlowScoped モデルクラスに集約する | Accepted |
+| [ADR-002](docs/adr/ADR-002-backing-bean-requestscoped-no-snapshot.md) | Backing Bean を @RequestScoped とし、ViewScoped スナップショット方式を採用しない | Accepted |
+| [ADR-003](docs/adr/ADR-003-addressfield-custom-component.md) | dads:addressField をカスタムコンポーネントで実装する | Accepted |
+| [ADR-004](docs/adr/ADR-004-extract-address-form-data.md) | 住所情報を AddressFormData として UserFormData から切り出す | Accepted |
+
+---
+
 ## Docker 構成の概要
 
 **Dockerfile（マルチステージビルド）**
