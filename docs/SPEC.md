@@ -30,7 +30,7 @@ list.xhtml
 
 ### register-input.xhtml — ユーザー登録（入力）
 
-現状の `index.xhtml` を Flow 対応に移行する。
+Faces Flow `register` の開始ノード。`index.xhtml` のフロー入口ボタンから遷移する。
 
 **フォーム構成**
 
@@ -62,7 +62,7 @@ list.xhtml
 - 住所は「郵便番号 / 都道府県・市区町村・町村番地 / ビル建物名」の順に表示
 
 **ボタン**
-- 「登録する」ボタン → `registerCompleteController.register()` 呼び出し → `register-complete.xhtml` へ遷移
+- 「登録する」ボタン → `registerConfirmBacking.register()` 呼び出し → `register-complete.xhtml` へ遷移
   - このタイミングで `UserFormData` の内容を `UserListBean.users` に追加する
 - 「戻る」ボタン → `register-input.xhtml` へ戻る（Flow 内遷移。入力値は保持）
 
@@ -79,9 +79,9 @@ list.xhtml
 
 ---
 
-### list.xhtml — 登録済みユーザー一覧（既存）
+### list.xhtml — 登録済みユーザー一覧
 
-変更なし。`UserListBean.users` を表示。
+`UserListBacking` が `UserListBean.users` を `List<List<String>>` に整形し、`dads:table` で表示する。
 
 ---
 
@@ -105,13 +105,21 @@ list.xhtml
 com.example.jsfsample/
 ├── model/
 │   ├── UserFormData.java          @Named @FlowScoped — ユーザー情報（AddressFormData を内包）
-│   └── AddressFormData.java       POJO — 住所情報 + 住所関連 BV アノテーション
+│   ├── AddressFormData.java       POJO — 住所情報 + 住所関連 BV アノテーション
+│   └── AddressCandidate.java      POJO — zipcloud API の住所候補 1件
 ├── backing/
 │   ├── RegisterInputBacking.java  @Named @RequestScoped — 入力画面（1:1）
 │   ├── RegisterConfirmBacking.java @Named @RequestScoped — 確認画面（1:1）
 │   └── RegisterCompleteBacking.java @Named @RequestScoped — 完了画面（1:1）
-└── list/
-    └── UserListBean.java          @Named @SessionScoped — 登録済みユーザー一覧
+├── list/
+│   ├── UserListBean.java          @Named @SessionScoped — 登録済みユーザーリスト保持
+│   └── UserListBacking.java       @Named @RequestScoped — 一覧画面向けテーブルデータ整形
+├── service/
+│   └── AddressSearchService.java  @Named @RequestScoped — zipcloud API 呼び出し
+├── component/
+│   └── AddressFieldComponent.java @FacesComponent — 郵便番号検索の状態管理（UIInput 継承）
+└── filter/
+    └── CharacterEncodingFilter.java @WebFilter — 全リクエストに UTF-8 を強制
 ```
 
 ### AddressFormData（POJO）
@@ -437,4 +445,5 @@ Ajax リクエストをまたいで候補リストを維持するために、`UI
 docker compose up --build
 ```
 
-- アクセス: http://localhost:8080/jsf-sample/index.xhtml（暫定。Flow 対応後は register-input.xhtml）
+- エントリポイント: http://localhost:8080/jsf-sample/index.xhtml（「ユーザー登録フォームへ」ボタンで Faces Flow 開始 → register-input.xhtml）
+- ユーザー一覧: http://localhost:8080/jsf-sample/list.xhtml
