@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:dads="jakarta.faces.composite/dads"
+      lang="ja">
+<f:metadata>
+    <f:viewAction action="#{registerInputBacking.guardFlow}" onPostback="false" />
+</f:metadata>
+<h:head>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>ユーザー登録 確認</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&amp;display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="#{request.contextPath}/css/dads.css" />
+</h:head>
+<h:body>
+<div class="page-container">
+
+    <h1 class="dads-heading" data-size="28" data-rule="4">ユーザー登録 確認</h1>
+
+    <div class="form-section">
+        <h2 class="dads-heading" data-size="20" data-rule="2">基本情報</h2>
+        <div class="form-fields">
+            <dads:outputField label="名前"             value="#{userFormData.name}" />
+            <dads:outputField label="メールアドレス"   value="#{userFormData.email}" />
+            <dads:outputField label="電話番号"         value="#{userFormData.phoneNumber}" />
+        </div>
+    </div>
+
+    <div class="form-section">
+        <h2 class="dads-heading" data-size="20" data-rule="2">住所</h2>
+        <div class="form-fields">
+            <dads:outputField label="郵便番号"
+                              value="#{userFormData.address.postalCode}" />
+            <dads:outputField label="都道府県・市区町村・町村番地"
+                              value="#{userFormData.address.prefecture}#{userFormData.address.city}#{userFormData.address.streetAddress}" />
+            <dads:outputField label="ビル・建物名"
+                              value="#{userFormData.address.buildingName}" />
+        </div>
+    </div>
+
+    <h:form>
+        <div class="form-actions">
+            <dads:button value="戻る"
+                         action="#{registerConfirmBacking.back}"
+                         buttonType="outline"
+                         size="md" />
+            <dads:button value="登録する"
+                         action="#{registerConfirmBacking.register}"
+                         buttonType="solid-fill"
+                         size="lg" />
+        </div>
+    </h:form>
+
+</div>
+</h:body>
+</html>

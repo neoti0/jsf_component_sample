@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:pt="jakarta.faces.passthrough"
+      xmlns:cc="jakarta.faces.composite"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:dads="jakarta.faces.composite/dads">
+
+<!--
+    dads:addressField — 郵便番号検索＋住所入力カスタムコンポーネント
+    componentType に AddressFieldComponent を指定することで Java クラスが状態を管理し、
+    このXHTMLテンプレートがレンダリングを担う（Java Renderer との比較のためのアーキテクチャ）。
+-->
+<cc:interface componentType="com.example.jsfsample.component.AddressFieldComponent">
+    <cc:attribute name="value"
+                  type="com.example.jsfsample.model.AddressFormData"
+                  required="true" />
+</cc:interface>
+
+<cc:implementation>
+<div id="#{cc.clientId}" class="dads-address-field">
+
+    <!-- 郵便番号 + 検索ボタン -->
+    <div class="dads-form-control-label" data-size="md">
+        <h:outputLabel for="postalCode" styleClass="dads-form-control-label__label">
+            郵便番号
+            <span class="dads-form-control-label__requirement" data-required="true">※必須</span>
+        </h:outputLabel>
+        <div class="postal-row">
+            <h:panelGroup id="postalCodeWrap" styleClass="dads-input-text">
+                <h:inputText id="postalCode"
+                             value="#{cc.attrs.value.postalCode}"
+                             styleClass="dads-input-text__input"
+                             pt:data-size="md"
+                             pt:placeholder="例: 100-0004" />
+                <h:message for="postalCode" styleClass="dads-input-text__error-text" />
+            </h:panelGroup>
+            <h:commandButton id="searchBtn"
+                             value="住所検索"
+                             action="#{cc.search(cc.attrs.value)}"
+                             styleClass="dads-button"
+                             pt:data-type="outline"
+                             pt:data-size="md">
+                <!--
+                    execute: 郵便番号入力のみ対象にして他フィールドのバリデーションをスキップ
+                    render:  このコンポーネント全体を再描画
+                -->
+                <f:ajax execute="#{cc.searchExecute}"
+                        render="#{cc.clientId}" />
+            </h:commandButton>
+        </div>
+        <!-- 0件エラーメッセージ -->
+        <h:outputText value="#{cc.errorMessage}"
+                      styleClass="dads-input-text__error-text"
+                      rendered="#{not empty cc.errorMessage}" />
+    </div>
+
+    <!-- 都道府県 -->
+    <dads:inputField id="prefecture"
+                     label="都道府県"
+                     value="#{cc.attrs.value.prefecture}" />
+
+    <!-- 市区町村 -->
+    <dads:inputField id="city"
+                     label="市区町村"
+                     value="#{cc.attrs.value.city}" />
+
+    <!-- 町村番地 -->
+    <dads:inputField id="streetAddress"
+                     label="町村番地"
+                     value="#{cc.attrs.value.streetAddress}" />
+
+    <!-- ビル・建物名 -->
+    <dads:inputField id="buildingName"
+                     label="ビル・建物名"
+                     value="#{cc.attrs.value.buildingName}"
+                     required="false" />
+
+    <!-- モーダル（候補が2件以上のとき表示） -->
+    <h:panelGroup id="modalArea" layout="block"
+                  styleClass="dads-modal-overlay"
+                  rendered="#{cc.showModal}">
+        <div class="dads-modal">
+            <div class="dads-modal__header">
+                <p class="dads-modal__title">住所候補を選択してください</p>
+            </div>
+            <div class="dads-modal__body">
+                <h:selectOneRadio id="candidateSelect"
+                                  value="#{cc.selectedIndex}"
+                                  layout="pageDirection"
+                                  styleClass="dads-radio-group">
+                    <f:selectItems value="#{cc.candidateSelectItems}" />
+                </h:selectOneRadio>
+            </div>
+            <div class="dads-modal__footer">
+                <h:commandButton id="confirmBtn"
+                                 value="確定"
+                                 action="#{cc.confirmSelection(cc.attrs.value)}"
+                                 styleClass="dads-button"
+                                 pt:data-type="solid-fill"
+                                 pt:data-size="md">
+                    <f:ajax execute="#{cc.confirmExecute}"
+                            render="#{cc.clientId}" />
+                </h:commandButton>
+                <h:commandButton id="cancelBtn"
+                                 value="キャンセル"
+                                 action="#{cc.cancelModal}"
+                                 styleClass="dads-button"
+                                 pt:data-type="outline"
+                                 pt:data-size="md"
+                                 immediate="true">
+                    <f:ajax execute="@this"
+                            render="#{cc.clientId}" />
+                </h:commandButton>
+            </div>
+        </div>
+    </h:panelGroup>
+
+</div>
+</cc:implementation>
+
+</html>

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
-      xmlns:ui="jakarta.faces.facelets"
+      xmlns:pt="jakarta.faces.passthrough"
+      xmlns:dads="jakarta.faces.composite/dads"
       lang="ja">
 <h:head>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -16,45 +17,22 @@
 
     <h1 class="dads-heading" data-size="28" data-rule="4">登録済みユーザー一覧</h1>
 
-    <h:panelGroup rendered="#{empty userBean.users}">
+    <h:panelGroup rendered="#{empty userListBacking.tableRows}">
         <p>登録済みユーザーはいません。</p>
     </h:panelGroup>
 
-    <h:panelGroup rendered="#{not empty userBean.users}">
-        <div class="dads-table">
-            <table class="dads-table__table">
-                <thead>
-                    <tr>
-                        <th class="dads-table__col-header" scope="col">#</th>
-                        <th class="dads-table__col-header" scope="col">名前</th>
-                        <th class="dads-table__col-header" scope="col">メールアドレス</th>
-                        <th class="dads-table__col-header" scope="col">電話番号</th>
-                        <th class="dads-table__col-header" scope="col">郵便番号</th>
-                        <th class="dads-table__col-header" scope="col">住所</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <ui:repeat value="#{userBean.users}" var="user" varStatus="status">
-                        <tr>
-                            <td>#{status.index + 1}</td>
-                            <td>#{user.name}</td>
-                            <td>#{user.email}</td>
-                            <td>#{user.phoneNumber}</td>
-                            <td>#{user.postalCode}</td>
-                            <td>
-                                #{user.prefecture}#{user.city}#{user.streetAddress}
-                                <h:panelGroup rendered="#{not empty user.buildingName}">
-                                    <br />#{user.buildingName}
-                                </h:panelGroup>
-                            </td>
-                        </tr>
-                    </ui:repeat>
-                </tbody>
-            </table>
-        </div>
+    <h:panelGroup rendered="#{not empty userListBacking.tableRows}">
+        <dads:table headers="#{userListBacking.tableHeaders}"
+                    rows="#{userListBacking.tableRows}" />
     </h:panelGroup>
 
-    <p><h:link value="登録フォームへ戻る" outcome="index" /></p>
+    <h:form styleClass="form-actions">
+        <h:commandButton value="登録フォームへ"
+                         action="register"
+                         styleClass="dads-button"
+                         pt:data-type="outline"
+                         pt:data-size="md" />
+    </h:form>
 
 </div>
 </h:body>

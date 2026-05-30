@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:cc="jakarta.faces.composite">
+
+<cc:interface>
+    <cc:attribute name="label" type="java.lang.String" required="true" />
+    <cc:attribute name="value" type="java.lang.String" required="true" />
+</cc:interface>
+
+<cc:implementation>
+    <div id="#{cc.clientId}" class="dads-form-control-label" data-size="md">
+        <span class="dads-form-control-label__label">#{cc.attrs.label}</span>
+        <p class="dads-output-field__value">#{cc.attrs.value}</p>
+    </div>
+</cc:implementation>
+
+</html>

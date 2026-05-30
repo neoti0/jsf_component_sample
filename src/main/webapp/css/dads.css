@@ -430,3 +430,78 @@ a:any-link {
 .postal-row .dads-input-text {
   flex: 0 0 11rem;
 }
+
+/* =============================================
+   確認画面出力フィールド (.dads-output-field)
+   ============================================= */
+
+.dads-output-field__value {
+  margin: 0;
+  padding: 0.75rem 0;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--color-neutral-solid-gray-800);
+  border-bottom: 1px solid var(--color-neutral-solid-gray-200);
+}
+
+/* =============================================
+   モーダル (.dads-modal)
+   ============================================= */
+
+.dads-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.dads-modal {
+  background-color: var(--color-neutral-white);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+  width: min(480px, 90vw);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.dads-modal__title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: bold;
+  color: var(--color-neutral-solid-gray-800);
+}
+
+.dads-modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.dads-modal__footer {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+/* =============================================
+   イラスト (.dads-illustration)
+   ============================================= */
+
+.dads-illustration {
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem 0;
+}
+
+.dads-illustration__image {
+  display: block;
+}
+
+.dads-illustration[data-size="sm"] .dads-illustration__image { width: 6rem;  height: auto; }
+.dads-illustration[data-size="md"] .dads-illustration__image { width: 10rem; height: auto; }
+.dads-illustration[data-size="lg"] .dads-illustration__image { width: 16rem; height: auto; }

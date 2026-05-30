@@ -16,6 +16,22 @@
         <url-pattern>*.xhtml</url-pattern>
     </servlet-mapping>
 
+    <!-- リクエスト / レスポンスともに UTF-8 を明示（Servlet 6.0 のデフォルトは UTF-8 だが WildFly の実装差異を防ぐため明示） -->
+    <request-character-encoding>UTF-8</request-character-encoding>
+    <response-character-encoding>UTF-8</response-character-encoding>
+
+    <!-- Faces Flow にはクライアントウィンドウ追跡が必須。明示設定しないと起動時に警告が出て動作が不安定になる -->
+    <context-param>
+        <param-name>jakarta.faces.CLIENT_WINDOW_MODE</param-name>
+        <param-value>url</param-value>
+    </context-param>
+
+    <!-- 空文字列を null として扱い、@NotBlank だけが発火するようにする -->
+    <context-param>
+        <param-name>jakarta.faces.INTERPRET_EMPTY_STRING_SUBMITTED_VALUES_AS_NULL</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
     <welcome-file-list>
         <welcome-file>index.xhtml</welcome-file>
     </welcome-file-list>

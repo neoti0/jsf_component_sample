@@ -65,6 +65,39 @@
 
 ---
 
+## dads:button にリテラルナビゲーション結果を渡すと ClassCastException
+
+**問題**: `index.xhtml` や `list.xhtml` で `<dads:button action="register" .../>` と書いたら
+起動時に `ClassCastException: String cannot be cast to ValueExpression` が発生した。
+
+**原因**: `dads:button` の `action` 属性は composite component インターフェースで
+`method-signature="java.lang.String action()"` と宣言されている。
+この宣言があると JSF は呼び出し元で渡された値を `MethodExpression` に変換しようとする。
+しかしリテラル文字列 `"register"` は `ValueExpression` でも `MethodExpression` でもないため、
+`retargetMethodExpressions` フェーズで `String → ValueExpression` キャストに失敗する。
+
+`h:commandButton action="register"` が問題なく動くのは、JSF コアコンポーネントが
+リテラル値を特別扱い（固定ナビゲーション結果として処理）するためであり、
+composite component 経由では同じ挙動にならない。
+
+**解決策**: フロー入口など「リテラル文字列でナビゲーションしたいだけ」のボタンは
+`dads:button` を使わず `h:commandButton` を直接書く。
+
+```xml
+<!-- NG: composite component はリテラルを MethodExpression に変換しようとして失敗 -->
+<dads:button action="register" ... />
+
+<!-- OK: h:commandButton はリテラルをそのままナビゲーション結果として扱う -->
+<h:commandButton action="register"
+                 styleClass="dads-button"
+                 pt:data-type="solid-fill"
+                 pt:data-size="lg" />
+```
+
+**適用ルール**: `dads:button` の `action` には必ず EL 式（`#{bean.method}` 形式）を渡すこと。
+
+---
+
 ## JSF ライフサイクルと searchAddress() の呼び出し
 
 **前提**: JSF の Ajax で `ajaxExecute` に `postalCode` を指定した場合、

@@ -4,4 +4,21 @@
               xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
                   https://jakarta.ee/xml/ns/jakartaee/web-facesconfig_4_0.xsd"
               version="4.0">
+
+    <flow-definition id="register">
+        <start-node>register-input</start-node>
+        <view id="register-input">
+            <vdl-document>/register-input.xhtml</vdl-document>
+        </view>
+        <view id="register-confirm">
+            <vdl-document>/register-confirm.xhtml</vdl-document>
+        </view>
+        <view id="register-complete">
+            <vdl-document>/register-complete.xhtml</vdl-document>
+        </view>
+        <flow-return id="returnToList">
+            <from-outcome>/list?faces-redirect=true</from-outcome>
+        </flow-return>
+    </flow-definition>
+
 </faces-config>

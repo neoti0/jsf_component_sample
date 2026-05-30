@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:dads="jakarta.faces.composite/dads"
+      lang="ja">
+<f:metadata>
+    <f:viewAction action="#{registerInputBacking.guardFlow}" onPostback="false" />
+</f:metadata>
+<h:head>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>ユーザー登録 完了</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&amp;display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="#{request.contextPath}/css/dads.css" />
+</h:head>
+<h:body>
+<div class="page-container">
+
+    <h1 class="dads-heading" data-size="28" data-rule="4">登録完了</h1>
+
+    <dads:illustration src="/img/complete.svg"
+                       alt="登録完了のイラスト"
+                       size="md" />
+
+    <p>ご登録ありがとうございました。</p>
+
+    <h:form>
+        <div class="form-actions">
+            <dads:button value="一覧を見る"
+                         action="#{registerCompleteBacking.toList}"
+                         buttonType="outline"
+                         size="md" />
+        </div>
+    </h:form>
+
+</div>
+</h:body>
+</html>

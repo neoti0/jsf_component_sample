@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:cc="jakarta.faces.composite">
+
+<cc:interface>
+    <cc:attribute name="src"  type="java.lang.String" required="true" />
+    <cc:attribute name="alt"  type="java.lang.String" default="" />
+    <cc:attribute name="size" type="java.lang.String" default="md" />
+</cc:interface>
+
+<cc:implementation>
+    <div id="#{cc.clientId}" class="dads-illustration" data-size="#{cc.attrs.size}">
+        <img src="#{request.contextPath}#{cc.attrs.src}"
+             alt="#{cc.attrs.alt}"
+             class="dads-illustration__image" />
+    </div>
+</cc:implementation>
+
+</html>

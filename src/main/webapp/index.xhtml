@@ -2,11 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
       xmlns:pt="jakarta.faces.passthrough"
-      xmlns:dads="jakarta.faces.composite/dads"
       lang="ja">
 <h:head>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>ユーザー登録</title>
+    <title>トップ</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&amp;display=swap" rel="stylesheet" />
@@ -15,91 +14,21 @@
 <h:body>
 <div class="page-container">
 
-    <h1 class="dads-heading" data-size="28" data-rule="4">ユーザー登録</h1>
+    <h1 class="dads-heading" data-size="28" data-rule="4">JSF サンプル</h1>
 
-    <h:form id="registerForm">
-
-        <!-- 基本情報 -->
-        <div class="form-section">
-            <h2 class="dads-heading" data-size="20" data-rule="2">基本情報</h2>
-            <div class="form-fields">
-
-                <dads:inputField id="name"
-                                 label="名前"
-                                 value="#{userBean.name}" />
-
-                <dads:inputField id="email"
-                                 label="メールアドレス"
-                                 value="#{userBean.email}" />
-
-                <dads:inputField id="phoneNumber"
-                                 label="電話番号"
-                                 value="#{userBean.phoneNumber}" />
-
-            </div>
-        </div>
-
-        <!-- 住所 -->
-        <div class="form-section">
-            <h2 class="dads-heading" data-size="20" data-rule="2">住所</h2>
-            <div class="form-fields">
-
-                <!--
-                    郵便番号は検索ボタンとの横並びレイアウトが特殊なため
-                    composite component を使わず手動構造を維持する
-                -->
-                <div class="dads-form-control-label" data-size="md">
-                    <h:outputLabel for="postalCode" styleClass="dads-form-control-label__label">
-                        郵便番号
-                        <span class="dads-form-control-label__requirement" data-required="true">※必須</span>
-                    </h:outputLabel>
-                    <div class="postal-row">
-                        <h:panelGroup id="postalCodeInput" styleClass="dads-input-text">
-                            <h:inputText id="postalCode" value="#{userBean.postalCode}"
-                                         styleClass="dads-input-text__input" pt:data-size="md"
-                                         pt:placeholder="例: 100-0004" />
-                            <h:message for="postalCode" styleClass="dads-input-text__error-text" />
-                        </h:panelGroup>
-                        <dads:button id="searchBtn"
-                                     value="住所検索"
-                                     action="#{userBean.searchAddress}"
-                                     buttonType="outline"
-                                     size="md"
-                                     ajaxExecute=":registerForm:postalCode"
-                                     ajaxRender=":registerForm:postalCodeInput :registerForm:prefecture :registerForm:city :registerForm:streetAddress" />
-                    </div>
-                </div>
-
-                <dads:inputField id="prefecture"
-                                 label="都道府県"
-                                 value="#{userBean.prefecture}" />
-
-                <dads:inputField id="city"
-                                 label="市区町村"
-                                 value="#{userBean.city}" />
-
-                <dads:inputField id="streetAddress"
-                                 label="町村番地"
-                                 value="#{userBean.streetAddress}" />
-
-                <dads:inputField id="buildingName"
-                                 label="ビル・建物名"
-                                 value="#{userBean.buildingName}"
-                                 required="false" />
-
-            </div>
-        </div>
-
-        <div class="form-actions">
-            <dads:button value="登録"
-                         action="#{userBean.register}"
-                         buttonType="solid-fill"
-                         size="lg" />
-        </div>
-
+    <h:form styleClass="form-actions">
+        <!--
+            dads:button は action に method-signature を要求するため、
+            リテラルナビゲーション結果 "register" には h:commandButton を直接使う
+        -->
+        <h:commandButton value="ユーザー登録フォームへ"
+                         action="register"
+                         styleClass="dads-button"
+                         pt:data-type="solid-fill"
+                         pt:data-size="lg" />
     </h:form>
 
-    <p><h:link value="一覧を見る" outcome="list" /></p>
+    <p><h:link value="登録済みユーザー一覧" outcome="list" /></p>
 
 </div>
 </h:body>

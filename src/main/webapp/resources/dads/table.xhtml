@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="jakarta.faces.composite"
+      xmlns:ui="jakarta.faces.facelets">
+
+<cc:interface>
+    <cc:attribute name="headers" required="true" />
+    <cc:attribute name="rows" required="true" />
+</cc:interface>
+
+<cc:implementation>
+    <div id="#{cc.clientId}" class="dads-table">
+        <table class="dads-table__table">
+            <thead>
+                <tr>
+                    <!-- var="colHeader": JSF 暗黙オブジェクト #{header}（リクエストヘッダーMap）との名前衝突を避けるため colHeader を使う -->
+                    <ui:repeat value="#{cc.attrs.headers}" var="colHeader">
+                        <th class="dads-table__col-header" scope="col">#{colHeader}</th>
+                    </ui:repeat>
+                </tr>
+            </thead>
+            <tbody>
+                <ui:repeat value="#{cc.attrs.rows}" var="row">
+                    <tr>
+                        <ui:repeat value="#{row}" var="cell">
+                            <td>#{empty cell ? '—' : cell}</td>
+                        </ui:repeat>
+                    </tr>
+                </ui:repeat>
+            </tbody>
+        </table>
+    </div>
+</cc:implementation>
+
+</html>
