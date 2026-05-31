@@ -1,4 +1,4 @@
-package com.example.jsfsample.backing;
+package com.example.jsfsample.user.backing;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.faces.context.FacesContext;
@@ -20,7 +20,7 @@ public class RegisterInputBacking {
     public String guardFlow() {
         FacesContext ctx = FacesContext.getCurrentInstance();
         if (ctx.getApplication().getFlowHandler().getCurrentFlow(ctx) == null) {
-            return "index?faces-redirect=true";
+            return "/views/index?faces-redirect=true";
         }
         return null;
     }

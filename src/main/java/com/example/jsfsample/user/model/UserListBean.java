@@ -1,6 +1,5 @@
-package com.example.jsfsample.list;
+package com.example.jsfsample.user.model;
 
-import com.example.jsfsample.model.UserFormData;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Named;
 import java.io.Serializable;

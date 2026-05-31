@@ -1,4 +1,4 @@
-package com.example.jsfsample.backing;
+package com.example.jsfsample.user.backing;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Named;

@@ -38,7 +38,7 @@ docker-compose up --build
 
 | 用途 | URL |
 |------|-----|
-| アプリケーション | http://localhost:8080/jsf-sample/index.xhtml |
+| アプリケーション | http://localhost:8080/jsf-sample/views/index.xhtml |
 | 管理コンソール | http://localhost:9990 |
 
 管理コンソールの認証情報: `admin` / `admin123`
@@ -70,11 +70,55 @@ jsf-sample/
 
 ## 命名規則
 
-- **パッケージ名**: `com.example.jsfsample`（機能追加時はサブパッケージを切る）
+- **パッケージ名**: `com.example.jsfsample`（以下のパッケージ配置ルールに従う）
 - **Managed Bean**: `@Named` + スコープアノテーション。クラス名は `XxxBean` とする
 - **EL 式での参照名**: `@Named` 無指定の場合はクラス名の先頭小文字（例: `UserBean` → `userBean`）
 - **XHTML ファイル名**: ケバブケース（例: `user-detail.xhtml`）
 - **アクションメソッド**: 遷移先のビュー名（文字列）または `null`（同一ページ再表示）を返す
+
+---
+
+## パッケージ配置ルール
+
+### Java（`src/main/java/com/example/jsfsample/`）
+
+ドメインを第一階層、機能分類を第二階層以降とする。
+
+```
+com.example.jsfsample/
+├── {ドメイン}/          # 例: user
+│   ├── backing/        # 画面制御クラス（XHTML と 1:1、@RequestScoped）
+│   ├── model/          # 値保持クラス・DTO（@FlowScoped / @SessionScoped / POJO）
+│   └── service/        # 外部API呼び出しなど入出力を伴う処理
+└── util/
+    └── {機能名}/        # 例: filter — 業務ドメインに属さない横断的処理
+```
+
+| 分類 | 第一階層 | 第二階層 | 基準 |
+|---|---|---|---|
+| 業務ドメイン | ドメイン名（例: `user`） | `backing` / `model` / `service` | 業務の関心事に属するクラス |
+| システム共通 | `util` | 機能名（例: `filter`） | 業務ドメインに属さない横断的処理 |
+
+### webapp（`src/main/webapp/`）
+
+```
+webapp/
+├── views/              # 画面 XHTML（フロー単位でサブディレクトリを切る）
+│   ├── index.xhtml
+│   ├── list.xhtml
+│   └── register/
+│       ├── register-input.xhtml
+│       ├── register-confirm.xhtml
+│       └── register-complete.xhtml
+├── WEB-INF/
+└── resources/
+    ├── dads/           # 複合コンポーネント（JSF仕様により移動禁止）
+    └── img/            # アプリ固有の画像
+```
+
+**重要**: `resources/dads/` は JSF の複合コンポーネント解決パスであり、**移動・リネーム禁止**。
+`xmlns:dads="jakarta.faces.composite/dads"` の名前空間解決に使われるため、別のディレクトリに移動すると
+コンポーネントが見つからずアプリが動作しなくなる。
 
 ---
 

@@ -67,6 +67,69 @@
 - [x] 郵便番号検索 API を実 API（zipcloud）に差し替え（AddressSearchService で実装済み）
 - [x] `AddressSearchService` の複数件返却ロジックを実装（zipcloud の複数結果をそのまま返却）
 
+### フェーズ6: パッケージ構成変更（jsf-sample）
+
+#### Java パッケージ再編
+- [x] `backing/` → `user/backing/` へ移動（RegisterInput/Confirm/CompleteBacking、UserListBacking）
+- [x] `model/UserFormData.java` → `user/model/` へ移動
+- [x] `list/UserListBean.java` → `user/model/` へ移動
+- [x] `list/UserListBacking.java` → `user/backing/` へ移動（`list/` パッケージ廃止）
+- [x] `filter/` → `util/filter/` へ移動（CharacterEncodingFilter）
+- [x] 移動に伴う `import` / `@Named` EL 参照の修正確認
+
+#### webapp 構成変更
+- [x] `views/` ディレクトリ作成、画面 XHTML を移動
+  - [x] `index.xhtml` → `views/index.xhtml`
+  - [x] `list.xhtml` → `views/list.xhtml`
+  - [x] `register-input.xhtml` → `views/register/register-input.xhtml`
+  - [x] `register-confirm.xhtml` → `views/register/register-confirm.xhtml`
+  - [x] `register-complete.xhtml` → `views/register/register-complete.xhtml`
+- [x] 静的ファイルを `resources/` 配下に整理
+  - [x] `img/complete.svg` → `resources/img/complete.svg`
+  - [ ] `css/dads.css` は DADS jar 移行時に削除（フェーズ7で対応）
+- [x] Faces Flow 定義のノードパスを `views/register/` に合わせて更新（`faces-config.xml`）
+- [x] 画面内の CSS・画像参照パスを更新
+
+#### CLAUDE.md 更新
+- [x] Java パッケージ配置ルール（ドメイン第一階層・機能第二階層）を追記
+- [x] `resources/dads/` の移動禁止理由（JSF 仕様）を明記
+
+---
+
+### フェーズ7: DADS プロジェクト分離
+
+- [ ] `dads-components` Maven プロジェクト新規作成（jar パッケージング）
+  - [ ] `pom.xml` 作成（Jakarta EE 10 依存、jar パッケージング）
+  - [ ] `META-INF/beans.xml` 作成（CDI 有効化）
+  - [ ] CLAUDE.md・docs/ を jsf-sample から取捨選択して移行
+- [ ] DADS クラスを jsf-sample から dads-components へ移行
+  - [ ] `AddressFieldComponent.java` → `com.example.dads.component`
+  - [ ] `AddressFormData.java` → `com.example.dads.model`
+  - [ ] `AddressCandidate.java` → `com.example.dads.model`
+  - [ ] `AddressSearchService.java` → `com.example.dads.service`
+- [ ] DADS リソースを `META-INF/resources/` へ移行
+  - [ ] `resources/dads/*.xhtml` → `META-INF/resources/dads/`
+  - [ ] `css/dads.css` → `META-INF/resources/css/dads.css`
+- [ ] jsf-sample の `pom.xml` に dads-components 依存を追加
+- [ ] jsf-sample の `resources/dads/`・`css/` を削除
+- [ ] jsf-sample 内の import パスを `com.example.dads.*` に更新
+- [ ] ビルド・動作確認（`mvn clean package` → docker-compose up）
+
+---
+
+### フェーズ8: DADSコンポーネント追加・修正
+
+#### dads:button 修正（`action` / `outcome` 属性分離）
+- [ ] `cc:attribute name="outcome" type="java.lang.String"` を追加
+- [ ] `h:commandButton` の `action` を `action` / `outcome` の条件分岐に対応
+- [ ] 呼び出し元 XHTML の `action="register"` 等をリテラル指定箇所を `outcome` に変更
+- [ ] 動作確認（EL式・リテラル両方で遷移できること）
+
+#### dads:link 新規作成（GET ナビゲーション）
+- [ ] `resources/dads/link.xhtml` 作成（`h:link` の DADS コンポーネント）
+  - [ ] 属性: `value`（String、必須）、`outcome`（String、必須）、`styleClass`（String、任意）
+- [ ] 呼び出し元 XHTML の `h:link` を `dads:link` に置き換え
+
 ---
 
 ## 将来対応（優先度低）

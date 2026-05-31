@@ -1,5 +1,6 @@
-package com.example.jsfsample.model;
+package com.example.jsfsample.user.model;
 
+import com.example.jsfsample.model.AddressFormData;
 import jakarta.faces.flow.FlowScoped;
 import jakarta.inject.Named;
 import jakarta.validation.Valid;

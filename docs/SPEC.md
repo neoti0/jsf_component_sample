@@ -447,3 +447,190 @@ docker compose up --build
 
 - エントリポイント: http://localhost:8080/jsf-sample/index.xhtml（「ユーザー登録フォームへ」ボタンで Faces Flow 開始 → register-input.xhtml）
 - ユーザー一覧: http://localhost:8080/jsf-sample/list.xhtml
+
+---
+
+## 追加要件
+
+---
+
+### パッケージ構成変更
+
+#### jsf-sample — Java パッケージ
+
+ドメインを第一階層、機能分類を第二階層以降とする。
+
+```
+com.example.jsfsample/
+├── user/
+│   ├── backing/
+│   │   ├── RegisterInputBacking.java    @Named @RequestScoped — 入力画面（1:1）
+│   │   ├── RegisterConfirmBacking.java  @Named @RequestScoped — 確認画面（1:1）
+│   │   ├── RegisterCompleteBacking.java @Named @RequestScoped — 完了画面（1:1）
+│   │   └── UserListBacking.java         @Named @RequestScoped — 一覧画面向けデータ整形
+│   └── model/
+│       ├── UserFormData.java            @Named @FlowScoped — ユーザー情報（FlowScoped）
+│       └── UserListBean.java            @Named @SessionScoped — 登録済みユーザーリスト保持
+└── util/
+    └── filter/
+        └── CharacterEncodingFilter.java @WebFilter — 全リクエストにUTF-8を強制
+```
+
+**パッケージ配置ルール**
+
+| 分類 | 第一階層 | 第二階層 | 基準 |
+|---|---|---|---|
+| 業務ドメイン | ドメイン名（例: `user`） | `backing` / `model` / `service` | 業務の関心事に属するクラス |
+| システム共通 | `util` | 機能名（例: `filter`） | 業務ドメインに属さない横断的処理 |
+
+- `backing`: XHTML と 1:1 の画面制御クラス（`@RequestScoped`）および状態を持たない表示整形クラス
+- `model`: 値保持クラス（`@FlowScoped`・`@SessionScoped`・POJO）と BV アノテーションの定義
+- `service`: 外部APIの呼び出しなど入出力を伴う処理
+
+---
+
+#### jsf-sample — webapp 構成
+
+```
+webapp/
+├── views/                          ← 画面 XHTML をフロー単位で格納
+│   ├── index.xhtml
+│   ├── list.xhtml
+│   └── register/
+│       ├── register-input.xhtml
+│       ├── register-confirm.xhtml
+│       └── register-complete.xhtml
+├── WEB-INF/
+└── resources/
+    ├── dads/                       ← 複合コンポーネント（JSF仕様により固定）
+    └── img/                        ← アプリ固有の画像（例: complete.svg）
+```
+
+**重要**: `resources/dads/` は JSF の複合コンポーネント解決パスであり、移動不可。
+`xmlns:dads="http://xmlns.jcp.org/jsf/composite/dads"` の名前空間解決に使われる。
+
+---
+
+### DADS プロジェクト分離
+
+DADS（デジタル庁デザインシステム）を独立した Maven プロジェクト（`jar` パッケージング）として切り出す。
+jsf-sample と並列の階層に配置し、jsf-sample の `pom.xml` に依存を追加して利用する。
+
+#### プロジェクト構成
+
+```
+dads-components/                    ← 新規プロジェクト（jar）
+├── pom.xml
+└── src/main/
+    ├── java/com/example/dads/
+    │   ├── component/
+    │   │   └── AddressFieldComponent.java  @FacesComponent
+    │   ├── model/
+    │   │   ├── AddressFormData.java        POJO — 住所フィールド + BV アノテーション
+    │   │   └── AddressCandidate.java       POJO — 住所候補 1件
+    │   └── service/
+    │       └── AddressSearchService.java   @Named @RequestScoped — zipcloud API 呼び出し
+    └── resources/META-INF/
+        ├── beans.xml
+        └── resources/
+            ├── dads/               ← 複合コンポーネント xhtml（JSF が自動スキャン）
+            │   ├── inputField.xhtml
+            │   ├── button.xhtml
+            │   ├── addressField.xhtml
+            │   ├── outputField.xhtml
+            │   ├── illustration.xhtml
+            │   ├── table.xhtml
+            │   └── link.xhtml      ← 新規追加
+            └── css/
+                └── dads.css
+```
+
+#### 振り分け方針
+
+| クラス / ファイル | 配置 | 理由 |
+|---|---|---|
+| 複合コンポーネント xhtml | DADS jar | デザインシステムの部品 |
+| `AddressFieldComponent.java` | DADS jar | コンポーネントの Java 実装 |
+| `AddressSearchService.java` | DADS jar | 業務の関心事でない共通処理 |
+| `AddressFormData.java` | DADS jar | `addressField` コンポーネントの契約型 |
+| `AddressCandidate.java` | DADS jar | `AddressSearchService` の戻り値型 |
+| `dads.css` | DADS jar | デザインシステムのスタイル定義 |
+| `complete.svg` 等の画像 | jsf-sample | 画面固有のコンテンツ（表示機構はDADS、中身はアプリ） |
+| アイコン等デザインと密結合した画像 | DADS jar | デザインシステムの一部とみなす |
+| `UserFormData.java` | jsf-sample | 業務ドメイン（顧客情報）のモデル |
+| `UserListBean.java` | jsf-sample | 業務ドメインのセッション状態 |
+| Backing Bean 各クラス | jsf-sample | アプリ固有の画面制御 |
+
+#### Maven 依存関係
+
+jsf-sample の `pom.xml` に DADS jar を依存として追加する。
+
+```xml
+<dependency>
+    <groupId>com.example</groupId>
+    <artifactId>dads-components</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+
+jsf-sample の `resources/dads/` は DADS jar から解決されるため削除する。
+
+---
+
+### DADSコンポーネント追加・修正
+
+#### dads:button — `action` / `outcome` 属性の分離（fix）
+
+**現状の問題**
+
+`action` 属性に EL 式（`#{bean.method}`）以外のリテラル文字列（例: `action="register"`）を渡すと ClassCastException が発生する。原因は `method-signature` 宣言によって JSF が属性値を必ず `MethodExpression` として解釈しようとするため。
+
+**修正方針**
+
+`action`（メソッド呼び出し）と `outcome`（リテラル遷移先）を別属性に分離し、呼び出し側が意図を明示する設計にする。
+
+| 属性 | 型 | 用途 |
+|---|---|---|
+| `action` | `MethodExpression`（`method-signature` 宣言） | Backing Bean のメソッドを呼び出して遷移先を決める |
+| `outcome` | `String` | 遷移先をリテラルで直接指定する |
+
+`action` と `outcome` はどちらか一方のみ指定する。両方指定した場合は `action` を優先する。
+
+**修正後の呼び出し例**
+
+```xml
+<!-- Backing Bean のメソッドを呼び出す場合 -->
+<dads:button value="登録する" action="#{registerConfirmBacking.register}" />
+
+<!-- リテラルで遷移先を指定する場合（フロー入口など） -->
+<dads:button value="ユーザー登録フォームへ" outcome="register" />
+```
+
+---
+
+#### dads:link — GETナビゲーション（新規）
+
+`h:link` の代替。フォーム送信を伴わない GET ナビゲーションに使用する。
+
+| 属性 | 型 | 必須 | 説明 |
+|---|---|---|---|
+| `value` | String | ○ | リンクテキスト |
+| `outcome` | String | ○ | 遷移先ビュー名 |
+| `styleClass` | String | × | 追加CSSクラス |
+
+**呼び出し例**
+
+```xml
+<dads:link value="一覧を見る" outcome="list" />
+```
+
+**統制対象外タグ（DADSコンポーネントに移行しない）**
+
+以下はデザインに関係しないフレームワーク制御タグのため、JSF タグをそのまま使用する。
+
+| タグ | 役割 |
+|---|---|
+| `h:form` | フォーム送信 |
+| `f:validateBean` | BV グループ指定 |
+| `ui:repeat` | 繰り返し描画 |
+| `h:messages` | グローバルメッセージ表示 |

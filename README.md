@@ -48,8 +48,8 @@ docker compose up --build
 
 | 用途 | URL |
 |------|-----|
-| トップ（フロー入口） | http://localhost:8080/jsf-sample/index.xhtml |
-| 登録済みユーザー一覧 | http://localhost:8080/jsf-sample/list.xhtml |
+| トップ（フロー入口） | http://localhost:8080/jsf-sample/views/index.xhtml |
+| 登録済みユーザー一覧 | http://localhost:8080/jsf-sample/views/list.xhtml |
 | WildFly 管理コンソール | http://localhost:9990 |
 
 管理コンソールの認証情報: `admin` / `admin123`
@@ -82,44 +82,49 @@ jsf-sample/
 ├── pom.xml                     # Jakarta EE 10 API (provided スコープ)
 └── src/main/
     ├── java/com/example/jsfsample/
-    │   ├── backing/             # Backing Bean（画面と 1:1、@RequestScoped）
-    │   │   ├── RegisterInputBacking.java
-    │   │   ├── RegisterConfirmBacking.java
-    │   │   └── RegisterCompleteBacking.java
-    │   ├── model/               # モデル / DTO（BV アノテーション集約）
-    │   │   ├── UserFormData.java        @Named @FlowScoped
-    │   │   ├── AddressFormData.java     POJO（住所情報）
-    │   │   └── AddressCandidate.java    POJO（住所候補）
-    │   ├── list/                # 一覧管理
-    │   │   ├── UserListBean.java        @Named @SessionScoped
-    │   │   └── UserListBacking.java     @Named @RequestScoped（テーブル整形）
-    │   ├── service/             # 外部 API 呼び出し
-    │   │   └── AddressSearchService.java  @Named @RequestScoped（zipcloud API）
-    │   ├── component/           # JSF カスタムコンポーネント
-    │   │   └── AddressFieldComponent.java  @FacesComponent（状態管理）
-    │   └── filter/              # サーブレットフィルター
-    │       └── CharacterEncodingFilter.java  @WebFilter（UTF-8 強制）
+    │   ├── user/                # ユーザー登録ドメイン
+    │   │   ├── backing/         # Backing Bean（画面と 1:1、@RequestScoped）
+    │   │   │   ├── RegisterInputBacking.java
+    │   │   │   ├── RegisterConfirmBacking.java
+    │   │   │   ├── RegisterCompleteBacking.java
+    │   │   │   └── UserListBacking.java     @Named @RequestScoped（テーブル整形）
+    │   │   └── model/           # モデル / DTO（BV アノテーション集約）
+    │   │       ├── UserFormData.java        @Named @FlowScoped
+    │   │       └── UserListBean.java        @Named @SessionScoped
+    │   ├── component/           # JSF カスタムコンポーネント（フェーズ7でDADSプロジェクトへ移行予定）
+    │   │   └── AddressFieldComponent.java
+    │   ├── model/               # DADSコンポーネント関連モデル（フェーズ7でDADSプロジェクトへ移行予定）
+    │   │   ├── AddressFormData.java
+    │   │   └── AddressCandidate.java
+    │   ├── service/             # 外部 API 呼び出し（フェーズ7でDADSプロジェクトへ移行予定）
+    │   │   └── AddressSearchService.java
+    │   └── util/
+    │       └── filter/          # サーブレットフィルター
+    │           └── CharacterEncodingFilter.java  @WebFilter（UTF-8 強制）
     └── webapp/
         ├── WEB-INF/
         │   ├── web.xml           # FacesServlet・CLIENT_WINDOW_MODE・文字コード
         │   ├── beans.xml         # CDI 有効化
         │   └── faces-config.xml  # Faces Flow (register) 定義
         ├── css/
-        │   └── dads.css          # DADS スタイル
-        ├── img/
-        │   └── complete.svg      # 登録完了イラスト
-        ├── resources/dads/       # DADS 複合コンポーネント
-        │   ├── inputField.xhtml
-        │   ├── button.xhtml
-        │   ├── addressField.xhtml
-        │   ├── outputField.xhtml
-        │   ├── table.xhtml
-        │   └── illustration.xhtml
-        ├── index.xhtml           # トップ（フロー入口）
-        ├── register-input.xhtml  # 登録入力画面（Flow ノード）
-        ├── register-confirm.xhtml # 登録確認画面（Flow ノード）
-        ├── register-complete.xhtml # 登録完了画面（Flow ノード）
-        └── list.xhtml            # 登録済みユーザー一覧
+        │   └── dads.css          # DADS スタイル（フェーズ7でDADSプロジェクトへ移行予定）
+        ├── resources/
+        │   ├── dads/             # DADS 複合コンポーネント（JSF仕様により移動禁止）
+        │   │   ├── inputField.xhtml
+        │   │   ├── button.xhtml
+        │   │   ├── addressField.xhtml
+        │   │   ├── outputField.xhtml
+        │   │   ├── table.xhtml
+        │   │   └── illustration.xhtml
+        │   └── img/
+        │       └── complete.svg  # 登録完了イラスト
+        └── views/                # 画面 XHTML（フロー単位でサブディレクトリ）
+            ├── index.xhtml       # トップ（フロー入口）
+            ├── list.xhtml        # 登録済みユーザー一覧
+            └── register/
+                ├── register-input.xhtml    # 登録入力画面（Flow ノード）
+                ├── register-confirm.xhtml  # 登録確認画面（Flow ノード）
+                └── register-complete.xhtml # 登録完了画面（Flow ノード）
 ```
 
 ---

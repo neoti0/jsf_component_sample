@@ -1,4 +1,4 @@
-package com.example.jsfsample.filter;
+package com.example.jsfsample.util.filter;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;

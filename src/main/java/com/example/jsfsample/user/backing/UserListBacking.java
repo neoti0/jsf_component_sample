@@ -1,5 +1,6 @@
-package com.example.jsfsample.list;
+package com.example.jsfsample.user.backing;
 
+import com.example.jsfsample.user.model.UserListBean;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
